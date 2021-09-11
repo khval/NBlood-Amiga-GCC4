@@ -111,10 +111,10 @@ static RGB toRGB;
 static RGB *palTable[5];
 static int curPalette;
 static int curGamma;
-int gGammaLevels;
+int32 gGammaLevels;
 bool gFogMode = false;
 char gStdColor[32];
-int32_t gBrightness;
+int32 gBrightness;
 
 char scrFindClosestColor(int red, int green, int blue)
 {

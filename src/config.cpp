@@ -62,68 +62,68 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 hashtable_t h_gamefuncs    = { NUMGAMEFUNCTIONS<<1, NULL };
 #endif
 
-int32_t MouseDeadZone, MouseBias;
-int32_t MouseFunctions[MAXMOUSEBUTTONS][2];
-int32_t MouseAnalogueAxes[MAXMOUSEAXES];
+int32 MouseDeadZone, MouseBias;
+int32 MouseFunctions[MAXMOUSEBUTTONS][2];
+int32 MouseAnalogueAxes[MAXMOUSEAXES];
 #ifndef EDUKE32
-int32_t MouseAnalogueScale[MAXMOUSEAXES];
+int32 MouseAnalogueScale[MAXMOUSEAXES];
 #endif
-int32_t JoystickFunctions[MAXJOYBUTTONSANDHATS][2];
-int32_t JoystickDigitalFunctions[MAXJOYAXES][2];
-int32_t JoystickAnalogueAxes[MAXJOYAXES];
-int32_t JoystickAnalogueScale[MAXJOYAXES];
-int32_t JoystickAnalogueDead[MAXJOYAXES];
-int32_t JoystickAnalogueSaturate[MAXJOYAXES];
+int32 JoystickFunctions[MAXJOYBUTTONSANDHATS][2];
+int32 JoystickDigitalFunctions[MAXJOYAXES][2];
+int32 JoystickAnalogueAxes[MAXJOYAXES];
+int32 JoystickAnalogueScale[MAXJOYAXES];
+int32 JoystickAnalogueDead[MAXJOYAXES];
+int32 JoystickAnalogueSaturate[MAXJOYAXES];
 uint8_t KeyboardKeys[NUMGAMEFUNCTIONS][2];
-int32_t scripthandle;
-int32_t setupread;
-int32_t MusicRestartsOnLoadToggle;
-int32_t configversion;
-int32_t CheckForUpdates;
-int32_t LastUpdateCheck;
-int32_t useprecache;
+int32 scripthandle;
+int32 setupread;
+int32 MusicRestartsOnLoadToggle;
+int32 configversion;
+int32 CheckForUpdates;
+int32 LastUpdateCheck;
+int32 useprecache;
 char CommbatMacro[MAXRIDECULE][MAXRIDECULELENGTH];
 char szPlayerName[MAXPLAYERNAME];
-int32_t gTurnSpeed;
-int32_t gDetail;
-int32_t gMouseAim;
-int32_t gAutoAim;
-int32_t gWeaponSwitch;
-int32_t gAutoRun;
-int32_t gViewInterpolate;
-int32_t gViewHBobbing;
-int32_t gViewVBobbing;
-int32_t gFollowMap;
-int32_t gOverlayMap;
-int32_t gRotateMap;
-int32_t gAimReticle;
-int32_t gSlopeTilting;
-int32_t gMessageState;
-int32_t gMessageCount;
-int32_t gMessageTime;
-int32_t gMessageFont;
-int32_t gbAdultContent;
+int32 gTurnSpeed;
+int32 gDetail;
+int32 gMouseAim;
+int32 gAutoAim;
+int32 gWeaponSwitch;
+int32 gAutoRun;
+int32 gViewInterpolate;
+int32 gViewHBobbing;
+int32 gViewVBobbing;
+int32 gFollowMap;
+int32 gOverlayMap;
+int32 gRotateMap;
+int32 gAimReticle;
+int32 gSlopeTilting;
+int32 gMessageState;
+int32 gMessageCount;
+int32 gMessageTime;
+int32 gMessageFont;
+int32 gbAdultContent;
 char gzAdultPassword[9];
-int32_t gDoppler;
-int32_t gShowPlayerNames;
-int32_t gShowWeapon;
-int32_t gMouseSensitivity;
-int32_t gMouseAiming;
-int32_t gMouseAimingFlipped;
-int32_t gRunKeyMode;
+int32 gDoppler;
+int32 gShowPlayerNames;
+int32 gShowWeapon;
+int32 gMouseSensitivity;
+int32 gMouseAiming;
+int32 gMouseAimingFlipped;
+int32 gRunKeyMode;
 bool gNoClip;
 bool gInfiniteAmmo;
 bool gFullMap;
-int32_t gUpscaleFactor;
-int32_t gLevelStats;
-int32_t gPowerupDuration;
-int32_t gShowMapTitle;
-int32_t gFov;
-int32_t gCenterHoriz;
-int32_t gDeliriumBlur;
+int32 gUpscaleFactor;
+int32 gLevelStats;
+int32 gPowerupDuration;
+int32 gShowMapTitle;
+int32 gFov;
+int32 gCenterHoriz;
+int32 gDeliriumBlur;
 
 //////////
-int gWeaponsV10x;
+int32 gWeaponsV10x;
 /////////
 
 #ifndef EDUKE32
@@ -142,15 +142,15 @@ int32 CONFIG_FunctionNameToNum( const char * func )
    return -1;
    }
 
-static int32_t SCRIPT_GetString_eduke32(int32_t scripthandle, char const *sectionname, char const *entryname, char *dest)
+static int32 SCRIPT_GetString_eduke32(int32 scripthandle, char const *sectionname, char const *entryname, char *dest)
 {
     return SCRIPT_GetString(scripthandle, sectionname, entryname, dest, 40); // 40 is MAXRIDECULELENGTH
 }
 #define SCRIPT_GetString SCRIPT_GetString_eduke32
 #else
-int32_t CONFIG_FunctionNameToNum(const char *func)
+int32 CONFIG_FunctionNameToNum(const char *func)
 {
-    int32_t i;
+    int32 i;
 
     if (!func)
         return -1;
@@ -171,7 +171,7 @@ int32_t CONFIG_FunctionNameToNum(const char *func)
 #endif
 
 
-char *CONFIG_FunctionNumToName(int32_t func)
+char *CONFIG_FunctionNumToName(int32 func)
 {
     if ((unsigned)func >= (unsigned)NUMGAMEFUNCTIONS)
         return NULL;
@@ -179,7 +179,7 @@ char *CONFIG_FunctionNumToName(int32_t func)
 }
 
 
-int32_t CONFIG_AnalogNameToNum(const char *func)
+int32 CONFIG_AnalogNameToNum(const char *func)
 {
     if (!func)
         return -1;
@@ -205,7 +205,7 @@ int32_t CONFIG_AnalogNameToNum(const char *func)
 }
 
 
-const char *CONFIG_AnalogNumToName(int32_t func)
+const char *CONFIG_AnalogNumToName(int32 func)
 {
     switch (func)
     {
@@ -310,7 +310,7 @@ void CONFIG_SetDefaults(void)
     gSetup.ydim = droidinfo.screen_height;
 #else
 # if defined RENDERTYPESDL && SDL_MAJOR_VERSION > 1
-    uint32_t inited = SDL_WasInit(SDL_INIT_VIDEO);
+    uint32 inited = SDL_WasInit(SDL_INIT_VIDEO);
     if (inited == 0)
         SDL_Init(SDL_INIT_VIDEO);
     else if (!(inited & SDL_INIT_VIDEO))
@@ -639,7 +639,7 @@ void CONFIG_SetupMouse(void)
                 MouseAnalogueAxes[i] = CONFIG_AnalogNameToNum(temp);
 #ifndef EDUKE32
         Bsprintf(str,"MouseAnalogScale%d",i);
-        int32_t scale = MouseAnalogueScale[i];
+        int32 scale = MouseAnalogueScale[i];
         SCRIPT_GetNumber(scripthandle, "Controls", str,&scale);
         MouseAnalogueScale[i] = scale;
 #endif
@@ -661,10 +661,10 @@ void CONFIG_SetupMouse(void)
 
 void CONFIG_SetupJoystick(void)
 {
-    int32_t i;
+    int32 i;
     char str[80];
     char temp[80];
-    int32_t scale;
+    int32 scale;
 
     if (scripthandle < 0) return;
 
@@ -888,7 +888,7 @@ int CONFIG_ReadSetup(void)
     SCRIPT_GetNumber(scripthandle, "Setup", "ForceSetup", &gSetup.forcesetup);
     SCRIPT_GetNumber(scripthandle, "Setup", "NoAutoLoad", &gSetup.noautoload);
 
-    int32_t cachesize;
+    int32 cachesize;
     SCRIPT_GetNumber(scripthandle, "Setup", "CacheSize", &cachesize);
 
     if (cachesize > MAXCACHE1DSIZE)
@@ -930,16 +930,16 @@ int CONFIG_ReadSetup(void)
 #endif
 
 #ifdef EDUKE32
-    SCRIPT_GetNumber(scripthandle, "Screen Setup", "MaxRefreshFreq", (int32_t *)&maxrefreshfreq);
+    SCRIPT_GetNumber(scripthandle, "Screen Setup", "MaxRefreshFreq", (int32 *)&maxrefreshfreq);
 #endif
     SCRIPT_GetNumber(scripthandle, "Screen Setup", "ScreenBPP", &gSetup.bpp);
     SCRIPT_GetNumber(scripthandle, "Screen Setup", "ScreenHeight", &gSetup.ydim);
     SCRIPT_GetNumber(scripthandle, "Screen Setup", "ScreenMode", &gSetup.fullscreen);
     SCRIPT_GetNumber(scripthandle, "Screen Setup", "ScreenWidth", &gSetup.xdim);
 #ifdef EDUKE32
-    SCRIPT_GetNumber(scripthandle, "Screen Setup", "WindowPosX", (int32_t *)&windowx);
-    SCRIPT_GetNumber(scripthandle, "Screen Setup", "WindowPosY", (int32_t *)&windowy);
-    SCRIPT_GetNumber(scripthandle, "Screen Setup", "WindowPositioning", (int32_t *)&windowpos);
+    SCRIPT_GetNumber(scripthandle, "Screen Setup", "WindowPosX", (int32 *)&windowx);
+    SCRIPT_GetNumber(scripthandle, "Screen Setup", "WindowPosY", (int32 *)&windowy);
+    SCRIPT_GetNumber(scripthandle, "Screen Setup", "WindowPositioning", (int32 *)&windowpos);
 #endif
 
 #ifndef EDUKE32
@@ -994,7 +994,7 @@ int CONFIG_ReadSetup(void)
     if (gSetup.bpp < 8) gSetup.bpp = 32;
 
 #ifdef POLYMER
-    int32_t rendmode = 0;
+    int32 rendmode = 0;
     SCRIPT_GetNumber(scripthandle, "Screen Setup", "Polymer", &rendmode);
     glrendmode = (rendmode > 0) ? REND_POLYMER : REND_POLYMOST;
 #endif
@@ -1063,7 +1063,7 @@ void CONFIG_WriteSettings(void) // save binds and aliases to <cfgname>_settings.
 #endif
 }
 
-void CONFIG_WriteSetup(uint32_t flags)
+void CONFIG_WriteSetup(uint32 flags)
 {
     char buf[128];
     if (!setupread) return;
@@ -1332,7 +1332,7 @@ static void CONFIG_GetMD4EntryName(char m[], uint8_t const * const md4)
             B_BIG32(B_UNBUF32(&md4[8])), B_BIG32(B_UNBUF32(&md4[12])));
 }
 
-int32_t CONFIG_GetMapBestTime(char const * const mapname, uint8_t const * const mapmd4)
+int32 CONFIG_GetMapBestTime(char const * const mapname, uint8_t const * const mapmd4)
 {
     if (!setupread || scripthandle < 0)
         return -1;
@@ -1341,7 +1341,7 @@ int32_t CONFIG_GetMapBestTime(char const * const mapname, uint8_t const * const 
 
     CONFIG_GetMD4EntryName(m, mapmd4);
 
-    int32_t t = -1;
+    int32 t = -1;
     if (SCRIPT_GetNumber(scripthandle, "MapTimes", m, &t))
     {
         // fall back to map filenames
@@ -1354,7 +1354,7 @@ int32_t CONFIG_GetMapBestTime(char const * const mapname, uint8_t const * const 
     return t;
 }
 
-int CONFIG_SetMapBestTime(uint8_t const * const mapmd4, int32_t tm)
+int CONFIG_SetMapBestTime(uint8_t const * const mapmd4, int32 tm)
 {
     if (scripthandle < 0 && (scripthandle = SCRIPT_Init(SetupFilename)) < 0)
         return -1;

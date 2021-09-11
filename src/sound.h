@@ -40,22 +40,22 @@ struct SFX
     char rawName[9];
 };
 
-extern int32_t SoundToggle;
-extern int32_t MusicToggle;
-extern int32_t CDAudioToggle;
-extern int32_t FXVolume;
-extern int32_t MusicVolume;
-extern int32_t CDVolume;
-extern int32_t NumVoices;
-extern int32_t NumChannels;
-extern int32_t NumBits;
-extern int32_t MixRate;
+extern int32 SoundToggle;
+extern int32 MusicToggle;
+extern int32 CDAudioToggle;
+extern int32 FXVolume;
+extern int32 MusicVolume;
+extern int32 CDVolume;
+extern int32 NumVoices;
+extern int32 NumChannels;
+extern int32 NumBits;
+extern int32 MixRate;
 #ifdef ASS_REVERSESTEREO
-extern int32_t ReverseStereo;
+extern int32 ReverseStereo;
 #endif
-extern int32_t MusicDevice;
+extern int32 MusicDevice;
 #ifndef EDUKE32
-extern int32_t FXDevice;
+extern int32 FXDevice;
 #endif
 
 int sndGetRate(int format);

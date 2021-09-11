@@ -117,7 +117,7 @@ struct INTERPOLATE {
 
 int pcBackground;
 int gViewMode = 3;
-int gViewSize = 2;
+int32 gViewSize = 2;
 
 bool gPrediction = true;
 

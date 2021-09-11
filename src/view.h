@@ -94,7 +94,7 @@ extern char gInterpolateSprite[];
 extern char gInterpolateWall[];
 extern char gInterpolateSector[];
 extern LOCATION gPrevSpriteLoc[kMaxSprites];
-extern int gViewSize;
+extern int32 gViewSize;
 extern CGameMessageMgr gGameMessageMgr;
 extern int gViewXCenter, gViewYCenter;
 extern int gViewX0, gViewY0, gViewX1, gViewY1;

@@ -116,7 +116,7 @@ struct GINPUT
 
 extern GINPUT gInput, gNetInput;
 extern bool bSilentAim;
-extern int32_t gMouseAim; // Should be an int32 due to being passed to OSD
+extern int32 gMouseAim; // Should be an int32 due to being passed to OSD
 
 extern fix16_t gViewLook, gViewAngle;
 #ifdef EDUKE32

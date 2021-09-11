@@ -26,14 +26,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "resource.h"
 
 typedef struct {
-    int32_t usejoystick;
-    int32_t usemouse;
-    int32_t fullscreen;
-    int32_t xdim;
-    int32_t ydim;
-    int32_t bpp;
-    int32_t forcesetup;
-    int32_t noautoload;
+    int32 usejoystick;
+    int32 usemouse;
+    int32 fullscreen;
+    int32 xdim;
+    int32 ydim;
+    int32 bpp;
+    int32 forcesetup;
+    int32 noautoload;
 } ud_setup_t;
 
 extern ud_setup_t gSetup;
@@ -42,7 +42,7 @@ extern ClockTicks gFrameTicks;
 extern int gFrame;
 //extern ClockTicks gGameClock;
 extern int gFrameRate;
-extern int gGamma;
+extern int32 gGamma;
 extern bool bVanilla;
 
 extern Resource gSysRes;

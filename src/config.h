@@ -37,75 +37,75 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define MAXRIDECULELENGTH 40
 #define MAXPLAYERNAME 16
 
-extern int32_t MouseDeadZone, MouseBias;
-extern int32_t SmoothInput;
-extern int32_t MouseFunctions[MAXMOUSEBUTTONS][2];
-extern int32_t MouseAnalogueAxes[MAXMOUSEAXES];
+extern int32 MouseDeadZone, MouseBias;
+extern int32 SmoothInput;
+extern int32 MouseFunctions[MAXMOUSEBUTTONS][2];
+extern int32 MouseAnalogueAxes[MAXMOUSEAXES];
 #ifndef EDUKE32
-extern int32_t MouseAnalogueScale[MAXMOUSEAXES];
+extern int32 MouseAnalogueScale[MAXMOUSEAXES];
 #endif
-extern int32_t JoystickFunctions[MAXJOYBUTTONSANDHATS][2];
-extern int32_t JoystickDigitalFunctions[MAXJOYAXES][2];
-extern int32_t JoystickAnalogueAxes[MAXJOYAXES];
-extern int32_t JoystickAnalogueScale[MAXJOYAXES];
-extern int32_t JoystickAnalogueDead[MAXJOYAXES];
-extern int32_t JoystickAnalogueSaturate[MAXJOYAXES];
+extern int32 JoystickFunctions[MAXJOYBUTTONSANDHATS][2];
+extern int32 JoystickDigitalFunctions[MAXJOYAXES][2];
+extern int32 JoystickAnalogueAxes[MAXJOYAXES];
+extern int32 JoystickAnalogueScale[MAXJOYAXES];
+extern int32 JoystickAnalogueDead[MAXJOYAXES];
+extern int32 JoystickAnalogueSaturate[MAXJOYAXES];
 extern uint8_t KeyboardKeys[NUMGAMEFUNCTIONS][2];
-extern int32_t scripthandle;
-extern int32_t setupread;
-extern int32_t MusicRestartsOnLoadToggle;
-extern int32_t configversion;
-extern int32_t CheckForUpdates;
-extern int32_t LastUpdateCheck;
-extern int32_t useprecache;
+extern int32 scripthandle;
+extern int32 setupread;
+extern int32 MusicRestartsOnLoadToggle;
+extern int32 configversion;
+extern int32 CheckForUpdates;
+extern int32 LastUpdateCheck;
+extern int32 useprecache;
 extern char CommbatMacro[MAXRIDECULE][MAXRIDECULELENGTH];
 extern char szPlayerName[MAXPLAYERNAME];
-extern int32_t gTurnSpeed;
-extern int32_t gDetail;
-extern int32_t gAutoAim;
-extern int32_t gWeaponSwitch;
-extern int32_t gAutoRun;
-extern int32_t gViewInterpolate;
-extern int32_t gViewHBobbing;
-extern int32_t gViewVBobbing;
-extern int32_t gFollowMap;
-extern int32_t gOverlayMap;
-extern int32_t gRotateMap;
-extern int32_t gAimReticle;
-extern int32_t gSlopeTilting;
-extern int32_t gMessageState;
-extern int32_t gMessageCount;
-extern int32_t gMessageTime;
-extern int32_t gMessageFont;
-extern int32_t gbAdultContent;
+extern int32 gTurnSpeed;
+extern int32 gDetail;
+extern int32 gAutoAim;
+extern int32 gWeaponSwitch;
+extern int32 gAutoRun;
+extern int32 gViewInterpolate;
+extern int32 gViewHBobbing;
+extern int32 gViewVBobbing;
+extern int32 gFollowMap;
+extern int32 gOverlayMap;
+extern int32 gRotateMap;
+extern int32 gAimReticle;
+extern int32 gSlopeTilting;
+extern int32 gMessageState;
+extern int32 gMessageCount;
+extern int32 gMessageTime;
+extern int32 gMessageFont;
+extern int32 gbAdultContent;
 extern char gzAdultPassword[9];
-extern int32_t gDoppler;
-extern int32_t gShowPlayerNames;
-extern int32_t gShowWeapon;
-extern int32_t gMouseSensitivity;
-extern int32_t gMouseAiming;
-extern int32_t gMouseAimingFlipped;
-extern int32_t gRunKeyMode;
+extern int32 gDoppler;
+extern int32 gShowPlayerNames;
+extern int32 gShowWeapon;
+extern int32 gMouseSensitivity;
+extern int32 gMouseAiming;
+extern int32 gMouseAimingFlipped;
+extern int32 gRunKeyMode;
 extern bool gNoClip;
 extern bool gInfiniteAmmo;
 extern bool gFullMap;
 #ifdef EDUKE32
 extern hashtable_t h_gamefuncs;
 #endif
-extern int32_t gUpscaleFactor;
-extern int32_t gLevelStats;
-extern int32_t gPowerupDuration;
-extern int32_t gShowMapTitle;
-extern int32_t gFov;
-extern int32_t gCenterHoriz;
-extern int32_t gDeliriumBlur;
+extern int32 gUpscaleFactor;
+extern int32 gLevelStats;
+extern int32 gPowerupDuration;
+extern int32 gShowMapTitle;
+extern int32 gFov;
+extern int32 gCenterHoriz;
+extern int32 gDeliriumBlur;
 
 ///////
-extern int gWeaponsV10x;
+extern int32 gWeaponsV10x;
 //////
 
 int  CONFIG_ReadSetup(void);
-void CONFIG_WriteSetup(uint32_t flags);
+void CONFIG_WriteSetup(uint32 flags);
 void CONFIG_SetDefaults(void);
 void CONFIG_SetupMouse(void);
 void CONFIG_SetupJoystick(void);
@@ -114,14 +114,14 @@ void CONFIG_SetDefaultKeys(const char (*keyptr)[MAXGAMEFUNCLEN], bool lazy=false
 void CONFIG_SetJoystickDefaults(int style);
 #endif
 
-int32_t CONFIG_GetMapBestTime(char const *mapname, uint8_t const *mapmd4);
-int     CONFIG_SetMapBestTime(uint8_t const *mapmd4, int32_t tm);
+int32 CONFIG_GetMapBestTime(char const *mapname, uint8_t const *mapmd4);
+int     CONFIG_SetMapBestTime(uint8_t const *mapmd4, int32 tm);
 
-int32_t CONFIG_FunctionNameToNum(const char *func);
-char *  CONFIG_FunctionNumToName(int32_t func);
+int32 CONFIG_FunctionNameToNum(const char *func);
+char *  CONFIG_FunctionNumToName(int32 func);
 
-int32_t     CONFIG_AnalogNameToNum(const char *func);
-const char *CONFIG_AnalogNumToName(int32_t func);
+int32     CONFIG_AnalogNameToNum(const char *func);
+const char *CONFIG_AnalogNumToName(int32 func);
 
 void CONFIG_MapKey(int which, kb_scancode key1, kb_scancode oldkey1, kb_scancode key2, kb_scancode oldkey2);
 

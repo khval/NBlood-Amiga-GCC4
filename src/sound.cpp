@@ -37,22 +37,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "renderlayer.h"
 
 
-int32_t SoundToggle;
-int32_t MusicToggle;
-int32_t CDAudioToggle;
-int32_t FXVolume;
-int32_t MusicVolume;
-int32_t CDVolume;
-int32_t NumVoices;
-int32_t NumChannels;
-int32_t NumBits;
-int32_t MixRate;
+int32 SoundToggle;
+int32 MusicToggle;
+int32 CDAudioToggle;
+int32 FXVolume;
+int32 MusicVolume;
+int32 CDVolume;
+int32 NumVoices;
+int32 NumChannels;
+int32 NumBits;
+int32 MixRate;
 #ifdef ASS_REVERSESTEREO
-int32_t ReverseStereo;
+int32 ReverseStereo;
 #endif
-int32_t MusicDevice;
+int32 MusicDevice;
 #ifndef EDUKE32
-int32_t FXDevice;
+int32 FXDevice;
 #endif
 
 Resource gSoundRes;
@@ -577,7 +577,7 @@ void InitSoundDevice(void)
     } else {
         fxdevicetype = FXDevice - 1;
     }
-    nStatus = FX_Init(fxdevicetype, NumVoices, &NumChannels, &NumBits, &MixRate, initdata);
+    nStatus = FX_Init(fxdevicetype, NumVoices, (int *) &NumChannels, (int *) &NumBits, (int *) &MixRate, initdata);
 #else
     nStatus = FX_Init(NumVoices, NumChannels, MixRate, initdata);
 #endif
