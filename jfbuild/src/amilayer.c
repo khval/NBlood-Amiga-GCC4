@@ -39,15 +39,15 @@
 #include <proto/icon.h>
 
 #ifndef __amigaos4__
-
 #include <cybergraphx/cybergraphics.h>
 #include <proto/cybergraphics.h>
+#include <psxport.h>
 #endif
 
 #include <devices/gameport.h>
 
-#ifndef __amigaos4__
-#include <psxport.h>
+#ifdef __amigaos4__
+#include <graphics/gfx.h>
 #endif
 
 #include <SDI_compiler.h>
@@ -158,7 +158,10 @@ extern void ASM c2p1x1_8_c5_bm(REG(d0, WORD chunkyx), REG(d1, WORD chunkyy), REG
 extern void ASM c2p1x1_8_c5_bm_040(REG(d0, WORD chunkyx), REG(d1, WORD chunkyy), REG(d2, WORD offsx), REG(d3, WORD offsy), REG(a0, APTR chunkyscreen), REG(a1, struct BitMap *bitmap));
 typedef void ASM (*c2p_write_bm_func)(REG(d0, WORD chunkyx), REG(d1, WORD chunkyy), REG(d2, WORD offsx), REG(d3, WORD offsy), REG(a0, APTR chunkyscreen), REG(a1, struct BitMap *bitmap));
 static c2p_write_bm_func c2p_write_bm;
+
+#ifndef __amigaos4__
 #define TIMERINT
+#endif
 #endif
 
 static void shutdownvideo(void);
@@ -354,7 +357,6 @@ int initsystem(void)
 
 	return 0;
 }
-
 
 //
 // uninitsystem() -- uninit Amiga systems
@@ -585,8 +587,8 @@ HANDLERPROTO(InputHandlerFunc, struct InputEvent *, struct InputEvent *input_eve
 
 			ie->ie_Code = IECODE_NOBUTTON;
 		}
-	}
 #endif
+	} // end of for..
 
 	return input_event;
 }
@@ -837,6 +839,7 @@ void setkeypresscallback(void (*callback)(int, int)) { keypresscallback = callba
 void setmousepresscallback(void (*callback)(int, int)) { mousepresscallback = callback; }
 void setjoypresscallback(void (*callback)(int, int)) { joypresscallback = callback; }
 
+
 //
 // initmouse() -- init mouse input
 //
@@ -885,7 +888,6 @@ void grabmouse(int a)
 	mousex = mousey = 0;
 }
 
-
 //
 // readmousexy() -- return mouse motion information
 //
@@ -918,7 +920,6 @@ void releaseallbuttons(void)
 	joyb = 0;
 }
 
-
 //
 //
 // ---------------------------------------
@@ -939,7 +940,11 @@ static APTR g_timerIntHandle = NULL;
 static struct EClockVal timeval;
 static ULONG timecount = 0;
 #else
+#ifdef __amigaos4__
+static struct TimeRequest *timerio;
+#else
 static struct timerequest *timerio;
+#endif
 static struct MsgPort *timerport;
 struct Device *TimerBase;
 #endif
@@ -974,11 +979,19 @@ int inittimer(int tickspersecond)
 #else
 	if ((timerport = CreateMsgPort()))
 	{
+#ifdef __amigaos4__
+		if ((timerio = (struct TimeRequest *)CreateIORequest(timerport, sizeof(struct TimeRequest))))
+#else
 		if ((timerio = (struct timerequest *)CreateIORequest(timerport, sizeof(struct timerequest))))
+#endif
 		{
 			if (!OpenDevice((STRPTR)TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timerio, 0))
 			{
+#ifdef __amigaos4__
+				TimerBase = timerio->Request.io_Device;
+#else
 				TimerBase = timerio->tr_node.io_Device;
+#endif
 				timerfreq = 1000000; // usec
 				timerticspersec = tickspersecond;
 				timerlastsample = (getusecticks() * timerticspersec / timerfreq);
@@ -1000,6 +1013,7 @@ int inittimer(int tickspersecond)
 
 	return 0;
 }
+
 
 //
 // uninittimer() -- shut down timer
@@ -1030,6 +1044,7 @@ void uninittimer(void)
 	timerfreq=0;
 }
 
+
 //
 // sampletimer() -- update totalclock
 //
@@ -1049,6 +1064,8 @@ void sampletimer(void)
 	if (usertimercallback) for (; n>0; n--) usertimercallback();
 #endif
 }
+
+
 
 //
 // getticks() -- returns a millisecond ticks count
@@ -1078,6 +1095,7 @@ unsigned int getticks(void)
 	return sec * 1000 + msec;
 }
 
+
 //
 // getusecticks() -- returns a microsecond ticks count
 //
@@ -1090,7 +1108,13 @@ unsigned int getusecticks(void)
 #else
 	struct timeval tv;
 	GetSysTime(&tv);
+
+#if defined(__linux__) || defined(__amigaos4__)
+	return (unsigned int)(tv.tv_sec * 1000000 + tv.tv_usec);
+#else
 	return (unsigned int)(tv.tv_secs * 1000000 + tv.tv_micro);
+#endif
+
 #endif
 }
 
@@ -1102,6 +1126,7 @@ int gettimerfreq(void)
 {
 	return timerticspersec;
 }
+
 
 
 //
@@ -1117,8 +1142,6 @@ void (*installusertimercallback(void (*callback)(void)))(void)
 	return oldtimercallback;
 }
 
-
-
 //
 //
 // ---------------------------------------
@@ -1133,7 +1156,7 @@ void (*installusertimercallback(void (*callback)(void)))(void)
 //
 // getvalidmodes() -- figure out what video modes are available
 //
-static int sortmodes(const struct validmode_t *a, const struct validmode_t *b)
+int sortmodes(const struct validmode_t *a, const struct validmode_t *b)
 {
 	int x;
 
@@ -1144,6 +1167,8 @@ static int sortmodes(const struct validmode_t *a, const struct validmode_t *b)
 
 	return 0;
 }
+
+
 static char modeschecked=0;
 void getvalidmodes(void)
 {
@@ -1177,6 +1202,8 @@ void getvalidmodes(void)
 		buildprintf("  - %dx%d %d-bit %s\n", x, y, c, (f&1)?"fullscreen":"windowed"); \
 	} \
 }
+
+
 
 #define CHECKL(w,h) if ((w < maxx) && (h < maxy))
 #define CHECKLE(w,h) if ((w <= maxx) && (h <= maxy))
@@ -1248,6 +1275,7 @@ void getvalidmodes(void)
 }
 
 
+
 //
 // checkvideomode() -- makes sure the video mode passed is legal
 //
@@ -1293,10 +1321,9 @@ int checkvideomode(int *x, int *y, int c, int fs, int forced)
 	return nearest;     // JBF 20031206: Returns the mode number
 }
 
-
-static void shutdownvideo(void)
+void shutdownvideo(void)
 {
-	RemoveInputHandler();
+///	RemoveInputHandler();
 
 	if (frame) {
 		//free(frame);
@@ -1331,7 +1358,7 @@ static void shutdownvideo(void)
 	use_c2p = 0;
 }
 
-static const char *getmonitorname(ULONG modeID)
+char *getmonitorname(ULONG modeID)
 {
 	ULONG monitorid = (modeID & MONITOR_ID_MASK);
 
@@ -1354,11 +1381,17 @@ static const char *getmonitorname(ULONG modeID)
 			return "MULTISCAN";
 	}
 
+#ifndef __amigaos4__
 	if (CyberGfxBase && IsCyberModeID(modeID))
 		return "RTG";
-
 	return "UNKNOWN";
+#else
+	return "UNKNOWN";
+#endif
+
 }
+
+
 
 //
 // setvideomode() -- set Amiga video mode
@@ -1388,13 +1421,17 @@ int setvideomode(int x, int y, int c, int fs)
 			buildprintf("Using forced mode id: %08x\n", (int)fsModeID);
 		} else if (fsMonitorID != (ULONG)INVALID_ID) {
 			buildprintf("Using forced monitor: %s\n", getmonitorname(fsMonitorID));
-		} else if (CyberGfxBase /*&& fsMonitorID == (ULONG)INVALID_ID*/) {
+		} 
+#ifndef __amigaos4__
+		else if (CyberGfxBase /*&& fsMonitorID == (ULONG)INVALID_ID*/) 
+		{
 			modeID = BestCModeIDTags(
 				CYBRBIDTG_Depth, 8,
 				CYBRBIDTG_NominalWidth, x,
 				CYBRBIDTG_NominalHeight, y,
 				TAG_DONE);
 		}
+#endif
 
 		if (modeID == (ULONG)INVALID_ID) {
 			modeID = BestModeID(
@@ -1571,7 +1608,6 @@ int setvideomode(int x, int y, int c, int fs)
 	return 0;
 }
 
-
 //
 // resetvideomode() -- resets the video system
 //
@@ -1603,9 +1639,10 @@ void enddrawing(void)
 //
 void showframe(void)
 {
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__amigaos4__)
 	WaitTOF();
 #endif
+
 	if (screen) {
 		if (use_c2p) {
 			currentBitMap ^= 1;
@@ -1620,7 +1657,11 @@ void showframe(void)
 			ChangeScreenBuffer(screen, sbuf[currentBitMap]);
 			safetochange = 0;
 		} else if (CyberGfxBase) {
+#ifdef __amigaos4__
+			WritePixelArray(frame, 0, 0, bytesperline, PIXF_CLUT, window->RPort, 0, 0, xres, yres );
+#else	// Cybergraphics.
 			WritePixelArray(frame, 0, 0, bytesperline, window->RPort, 0, 0, xres, yres, RECTFMT_LUT8);
+#endif
 		} else if (use_wcp) {
 			WriteChunkyPixels(window->RPort, 0, 0, xres - 1, yres - 1, frame, bytesperline);
 		} else {
@@ -1631,7 +1672,11 @@ void showframe(void)
 			updatePalette = 0;
 		}
 	} else {
+#ifdef __amigaos4__
+		WritePixelArray(frame, 0, 0, bytesperline, PIXF_CLUT, window->RPort, window->BorderLeft, window->BorderTop, xres, yres );
+#else	// Cybergraphics.
 		WriteLUTPixelArray(frame, 0, 0, bytesperline, window->RPort, ppal, window->BorderLeft, window->BorderTop, xres, yres, CTABFMT_XRGB8);
+#endif
 	}
 }
 
@@ -1688,6 +1733,7 @@ int setgamma(float gamma)
 }
 
 
+
 //
 //
 // ---------------------------------------
@@ -1698,7 +1744,14 @@ int setgamma(float gamma)
 //
 //
 
-#ifndef __amigaos4__
+#ifdef __amigaos4__
+
+void updatejoystick()
+{
+
+}
+
+#else
 
 static void updatejoystick(void)
 {
@@ -1779,6 +1832,8 @@ static void updatejoystick(void)
 }
 
 #endif
+
+
 
 //
 // handleevents() -- process the Amiga IDCMP message queue
@@ -1910,21 +1965,20 @@ int handleevents(void)
 			break;
 
 #ifdef __amigaos4__
-			case	IDCMP_EXTENDEDMOUSE:
+		case	IDCMP_EXTENDEDMOUSE:
 
-				switch (imsg->Code)
-				{
-					case IMSGCODE_INTUIWHEELDATA:
-							{
-								struct IntuiWheelData *wheel = (struct IntuiWheelData *) imsg -> IAddress;
+			switch (imsg->Code)
+			{
+				case IMSGCODE_INTUIWHEELDATA:
+						{
+							struct IntuiWheelData *wheel = (struct IntuiWheelData *) imsg -> IAddress;
 	
-								//    int16  WheelX;   /* horizontal wheel movement delta       */
-								//    int16  WheelY;   /* vertical wheel movement delta         */
-							};
-							break;
-				}
-		}
-
+							//      WheelX;   // horizontal wheel movement delta       
+						//      WheelY;   // vertical wheel movement delta         
+						};
+						break;
+			}
+			break;
 #endif
 
 		case IDCMP_ACTIVEWINDOW:
@@ -1954,6 +2008,7 @@ int handleevents(void)
 	return rv;
 }
 
+
 #ifdef __libnix__
 #if __GNUC__ <= 3
 // don't touch ENV:
@@ -1977,3 +2032,4 @@ ldiv_t ldiv(long num, long denom)
 	return r;
 }
 #endif
+
