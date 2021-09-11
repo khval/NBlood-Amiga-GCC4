@@ -10,9 +10,18 @@
 #define NM_WHEEL_UP RAWKEY_NM_WHEEL_UP
 #define NM_WHEEL_DOWN RAWKEY_NM_WHEEL_DOWN
 #define NM_BUTTON_FOURTH RAWKEY_NM_BUTTON_FOURTH
-#elif !defined __MORPHOS__
+
+#elif !defined __MORPHOS__ && !defined __amigaos4__
 #include <newmouse.h>
 #endif
+
+#ifdef __amigaos4__
+#define __USE_INLINE__
+#ifdef TIMERINT
+#undef TIMERINT
+#endif
+#endif
+
 #include <libraries/lowlevel.h>
 #include <intuition/intuition.h>
 #include <intuition/intuitionbase.h>
@@ -29,11 +38,17 @@
 #include <proto/graphics.h>
 #include <proto/icon.h>
 
+#ifndef __amigaos4__
+
 #include <cybergraphx/cybergraphics.h>
 #include <proto/cybergraphics.h>
+#endif
 
 #include <devices/gameport.h>
+
+#ifndef __amigaos4__
 #include <psxport.h>
+#endif
 
 #include <SDI_compiler.h>
 #include <SDI_interrupt.h>
@@ -322,7 +337,7 @@ int initsystem(void)
 {
 	atexit(uninitsystem);
 
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__amigaos4__)
 	CyberGfxBase = OpenLibrary((STRPTR)"cybergraphics.library", 41);
 
 	if (SysBase->AttnFlags & AFF_68040)
@@ -494,8 +509,20 @@ HANDLERPROTO(InputHandlerFunc, struct InputEvent *, struct InputEvent *input_eve
 	if (!mouseacquired)
 		return input_event;
 
+#ifdef __amigaos4___
+	{
+		struct Screen *FirstScreen = LockScreenList( VOID );
+		UnlockScreenList()
+
+		if (!window || !(window->Flags & WFLG_WINDOWACTIVE) || (window->WScreen && window->WScreen != FirstScreen))
+			return input_event;
+	}
+#endif
+
+#ifndef __amigaos4__
 	if (!window || !(window->Flags & WFLG_WINDOWACTIVE) || (window->WScreen && window->WScreen != IntuitionBase->FirstScreen))
 		return input_event;
+#endif
 
 	for (ie = input_event; ie; ie = ie->ie_NextEvent)
 	{
@@ -531,7 +558,7 @@ HANDLERPROTO(InputHandlerFunc, struct InputEvent *, struct InputEvent *input_eve
 			ie->ie_position.ie_xy.ie_y = 0;
 
 		}
-		//else if (ie->ie_Class == IECLASS_NEWMOUSE)
+#ifndef __amigaos4__
 		else if (ie->ie_Class == IECLASS_RAWKEY && code >= NM_WHEEL_UP && code <= NM_BUTTON_FOURTH)
 		{
 			// mouse button 4, mouse wheel
@@ -559,9 +586,12 @@ HANDLERPROTO(InputHandlerFunc, struct InputEvent *, struct InputEvent *input_eve
 			ie->ie_Code = IECODE_NOBUTTON;
 		}
 	}
+#endif
 
 	return input_event;
 }
+
+#ifndef __amigaos4__
 MakeInterruptPri(inputHandler, InputHandlerFunc, "Build input handler", NULL, 100);
 
 static void RemoveInputHandler(void)
@@ -600,7 +630,7 @@ static int AddInputHandler(void)
 
 	return 1;
 }
-
+#endif
 
 //
 // initinput() -- init input system
@@ -826,7 +856,7 @@ void uninitmouse(void)
 	moustat=0;
 }
 
-static void constrainmouse(int a)
+void constrainmouse(int a)
 {
 	if (!window) return;
 	if (a) {
@@ -1035,8 +1065,15 @@ unsigned int getticks(void)
 #else
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
+
+#if defined(__linux__) || defined( __amigaos4__)
+	ULONG sec = tv.tv_sec;
+	ULONG msec = tv.tv_usec / 1000;
+#else
 	ULONG sec = tv.tv_secs;
 	ULONG msec = tv.tv_micro / 1000;
+#endif
+
 #endif
 	return sec * 1000 + msec;
 }
@@ -1448,6 +1485,11 @@ int setvideomode(int x, int y, int c, int fs)
 
 	flags = WFLG_ACTIVATE | WFLG_RMBTRAP;
 	idcmp = IDCMP_CLOSEWINDOW | IDCMP_ACTIVEWINDOW | IDCMP_INACTIVEWINDOW | IDCMP_RAWKEY;
+
+#ifdef __amigaos4__
+	idcmp |= IDCMP_EXTENDEDMOUSE;
+#endif
+
 	if (screen) {
 		flags |= WFLG_BACKDROP | WFLG_BORDERLESS;
 	} else {
@@ -1656,6 +1698,7 @@ int setgamma(float gamma)
 //
 //
 
+#ifndef __amigaos4__
 
 static void updatejoystick(void)
 {
@@ -1734,6 +1777,8 @@ static void updatejoystick(void)
 			   (((portState & JPF_JOY_RIGHT) >> JPB_JOY_RIGHT) << 14); // Right
 	}
 }
+
+#endif
 
 //
 // handleevents() -- process the Amiga IDCMP message queue
@@ -1863,6 +1908,25 @@ int handleevents(void)
 				}
 			}
 			break;
+
+#ifdef __amigaos4__
+			case	IDCMP_EXTENDEDMOUSE:
+
+				switch (imsg->Code)
+				{
+					case IMSGCODE_INTUIWHEELDATA:
+							{
+								struct IntuiWheelData *wheel = (struct IntuiWheelData *) imsg -> IAddress;
+	
+								//    int16  WheelX;   /* horizontal wheel movement delta       */
+								//    int16  WheelY;   /* vertical wheel movement delta         */
+							};
+							break;
+				}
+		}
+
+#endif
+
 		case IDCMP_ACTIVEWINDOW:
 			appactive = 1;
 			rv=-1;
