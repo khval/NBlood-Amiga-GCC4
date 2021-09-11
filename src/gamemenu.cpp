@@ -3241,7 +3241,7 @@ void CGameMenuFileSelect::Draw(void)
 
 void klistbookends(BUILDVFS_FIND_REC *start)
 {
-    auto end = start;
+    BUILDVFS_FIND_REC * end = start;
 
     if (!start)
         return;
@@ -3254,7 +3254,7 @@ void klistbookends(BUILDVFS_FIND_REC *start)
 
     int i = 0;
 
-    for (auto n = start; n; n = n->next)
+    for (BUILDVFS_FIND_REC * n = start; n; n = n->next)
     {
         n->type = i; // overload this...
         n->usera = start;
@@ -3421,7 +3421,7 @@ void CGameMenuFileSelect::MovementVerify(void)
         return;
     gMenuTextMgr.GetFontInfo(m_nFont, NULL, NULL, &height);
     int32_t rows = 0;
-    for (auto dir = findhigh[currentList]->usera; dir; dir = dir->next, rows++)
+    for (_CACHE1D_FIND_REC*dir = findhigh[currentList]->usera; dir; dir = dir->next, rows++)
     {
     }
     int const maxRows = (162 - 40) / height;

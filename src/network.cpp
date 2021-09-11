@@ -20,6 +20,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 //-------------------------------------------------------------------------
+
+#ifdef __amigaos4__
+#define __USE_INLINE__
+#endif
+
+
 #ifndef EDUKE32
 #include "compat.h"
 #endif
@@ -979,6 +985,11 @@ static unsigned int allocSize = 0;
 #endif
 
 #include <proto/exec.h>
+
+#ifndef __amigaos4__
+
+// this are dummy functions for OS's that do not have this functions...
+
 static APTR AllocVecPooled(APTR poolHeader, ULONG memSize)
 {
     ULONG *memory;
@@ -1005,6 +1016,8 @@ static void FreeVecPooled(APTR poolHeader, APTR memory)
     STAT_FREE(memSize);
     FreePooled(poolHeader, mem, memSize);
 }
+
+#endif
 
 static APTR memPool;
 

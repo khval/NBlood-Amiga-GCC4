@@ -113,12 +113,18 @@ CDemo::~CDemo()
         fclose(hRFile);
         hRFile = NULL;
     }
+#if (__GNUC__ > 4)
     auto pNextDemo = pFirstDemo;
     for (auto pDemo = pFirstDemo; pDemo != NULL; pDemo = pNextDemo)
+#else
+    DEMOCHAIN *pNextDemo = pFirstDemo;
+    for (DEMOCHAIN *pDemo = pFirstDemo; pDemo != NULL; pDemo = pNextDemo)
+#endif
     {
         pNextDemo = pDemo->pNext;
         delete pDemo;
     }
+
     pFirstDemo = NULL;
     pCurrentDemo = NULL;
     at59ef = 0;
@@ -465,14 +471,26 @@ void CDemo::StopPlayback(void)
 
 void CDemo::LoadDemoInfo(void)
 {
+#if (__GNUC__ > 4)
     auto pDemo = &pFirstDemo;
+#else
+	DEMOCHAIN **pDemo =  &pFirstDemo;
+#endif
+
     const int opsm = pathsearchmode;
     at59ef = 0;
     pathsearchmode = 0;
     char zFN[BMAX_PATH];
     Bsnprintf(zFN, BMAX_PATH, "%s*.dem", BloodIniPre);
+
+#if (__GNUC__ > 4)
     auto pList = klistpath("/", zFN, BUILDVFS_FIND_FILE);
     auto pIterator = pList;
+#else
+    CACHE1D_FIND_REC *pList = klistpath("/", zFN, BUILDVFS_FIND_FILE);
+    CACHE1D_FIND_REC *pIterator = pList;
+#endif
+
     while (pIterator != NULL)
     {
         int hFile = kopen4loadfrommod(pIterator->name, 0);
@@ -487,7 +505,7 @@ void CDemo::LoadDemoInfo(void)
         if ((atf.signature == 0x1a4d4544 /* '\x1aMED' */&& atf.nVersion == BloodVersion)
             || (atf.signature == 0x1a4d4445 /* '\x1aMDE' */ && atf.nVersion == BYTEVERSION))
         {
-            *pDemo = new DEMOCHAIN;
+            *pDemo = new DEMOCHAIN();
             (*pDemo)->pNext = NULL;
             Bstrncpy((*pDemo)->zName, pIterator->name, BMAX_PATH);
             at59ef++;

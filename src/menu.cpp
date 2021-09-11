@@ -2308,7 +2308,7 @@ void SetupMouseButtonMenu(CGameMenuItemChain *pItem)
     UNREFERENCED_PARAMETER(pItem);
     for (int i = 0; i < MENUMOUSEFUNCTIONS; i++)
     {
-        auto pItem = pItemOptionsControlMouseButton[i];
+        CGameMenuItemZCycle *pItem = pItemOptionsControlMouseButton[i];
         pItem->m_nFocus = 0;
         for (int j = 0; j < NUMGAMEFUNCTIONS+1; j++)
         {
@@ -2341,7 +2341,7 @@ void SetupJoystickButtonMenu(CGameMenuItemChain *pItem)
     UNREFERENCED_PARAMETER(pItem);
     for (int i = 0; i < MENUJOYFUNCTIONS; i++)
     {
-        auto pItem = pItemOptionsControlJoystickButton[i];
+        CGameMenuItemZCycle *pItem = pItemOptionsControlJoystickButton[i];
         pItem->m_nFocus = 0;
         for (int j = 0; j < NUMGAMEFUNCTIONS+1; j++)
         {

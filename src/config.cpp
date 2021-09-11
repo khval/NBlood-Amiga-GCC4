@@ -226,7 +226,12 @@ const char *CONFIG_AnalogNumToName(int32_t func)
 void CONFIG_SetDefaultKeys(const char (*keyptr)[MAXGAMEFUNCLEN], bool lazy/*=false*/)
 {
     static char const s_gamefunc_[] = "gamefunc_";
+
+#ifdef __amigaos4__
+    int strlen_gamefunc_ = strlen(s_gamefunc_);
+#else
     int constexpr strlen_gamefunc_ = ARRAY_SIZE(s_gamefunc_) - 1;
+#endif
 
     if (!lazy)
     {
@@ -240,7 +245,11 @@ void CONFIG_SetDefaultKeys(const char (*keyptr)[MAXGAMEFUNCLEN], bool lazy/*=fal
         if (gamefunctions[i][0] == '\0')
             continue;
 
+#if (__GNUC__ > 4)
         auto &key = KeyboardKeys[i];
+#else
+        uint8_t  *key = KeyboardKeys[i];
+#endif
 
 #ifndef EDUKE32
         int const default0 = KB_StringToScanCode((char *)keyptr[i<<1]);

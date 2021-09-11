@@ -46,8 +46,15 @@ public:
         char text[kMaxMessageTextLength];
         int pal;
         MESSAGE_PRIORITY priority;
-        bool deleted = false;
+        bool deleted;
+
+	messageStruct()
+	{
+		deleted = false;
+	}
+
     };
+
     char state;
     int x;
     int y;

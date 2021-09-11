@@ -97,6 +97,19 @@ struct GINPUT
     USEFLAGS useFlags;
     uint8_t newWeapon;
     fix16_t q16mlook;
+
+	void reset()
+	{
+//		syncFlags = 0;
+		forward = 0;
+		q16turn = 0;
+		strafe = 0;
+//		buttonFlags = 0;
+//		keyFlags = 0;
+//		useFlags = ;
+		newWeapon = 0;
+		q16mlook = 0;
+	}
 };
 
 #pragma pack(pop)

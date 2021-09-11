@@ -1023,7 +1023,9 @@ int16_t startang, startsectnum;
 void StartLevel(GAMEOPTIONS *gameOptions)
 {
     EndLevel();
-    gInput = {};
+
+    gInput.reset();
+
     gStartNewGame = 0;
     ready2send = 0;
 #ifndef __AMIGA__
@@ -2335,7 +2337,7 @@ RESTART:
                         break;
                     frameJustDrawn = false;
                     gNetInput = gInput;
-                    gInput = {};//t4 = 0;t1 = t2 = t3 = 0;
+                    gInput.reset();//t4 = 0;t1 = t2 = t3 = 0;
                     do
                     {//tstart = getusecticks();
                         netGetInput();//t4 += getusecticks()-tstart;
@@ -2829,7 +2831,7 @@ static int parsedefinitions_game(scriptfile *pScript, int firstPass)
             int32_t havesurface = 0, havevox = 0, haveview = 0, haveshade = 0;
             int32_t surface = 0, vox = 0, view = 0, shade = 0;
             int32_t tile_crc32 = 0;
-            vec2_t  tile_size{};
+            vec2_t  tile_size;
             uint8_t have_crc32 = 0;
             uint8_t have_size = 0;
 
@@ -3195,7 +3197,7 @@ void ScanINIFiles(void)
     BUILDVFS_FIND_REC *pINIList = klistpath("/", "*.ini", BUILDVFS_FIND_FILE);
     pINIChain = NULL;
     bool bINIExists = false;
-    for (auto pIter = pINIList; pIter; pIter = pIter->next)
+    for (BUILDVFS_FIND_REC * pIter = pINIList; pIter; pIter = pIter->next)
     {
         if (!Bstrncasecmp(BloodIniFile, pIter->name, BMAX_PATH))
         {
@@ -3210,7 +3212,7 @@ void ScanINIFiles(void)
     }
     klistfree(pINIList);
     pINISelected = pINIChain;
-    for (auto pIter = pINIChain; pIter; pIter = pIter->pNext)
+    for (INICHAIN const *pIter = pINIChain; pIter; pIter = pIter->pNext)
     {
         if (!Bstrncasecmp(BloodIniFile, pIter->zName, BMAX_PATH))
         {

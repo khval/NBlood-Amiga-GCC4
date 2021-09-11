@@ -590,7 +590,7 @@ static inline void tileSetSize(int32_t picnum, int16_t dasizx, int16_t dasizy)
     tileUpdatePicSiz(picnum);
 }*/
 
-#ifdef __AMIGA__
+#if defined(__AMIGA__) && !defined(__amigaos4__)
 static inline size_t strnlen(const char * s, size_t len) {
     size_t i = 0;
     for ( ; i < len && s[i]; ++i);

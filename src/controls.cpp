@@ -57,7 +57,7 @@ void ctrlClearAllInput(void)
 GINPUT gInput, gNetInput;
 bool bSilentAim = false;
 
-int32_t GetTime(void)
+int32 GetTime(void)
 {
     return (int32_t)totalclock;
 }
@@ -159,7 +159,7 @@ void ctrlGetInput(void)
 
     if (!gGameStarted || gInputMode != INPUT_MODE_0)
     {
-        gInput = {};
+        gInput.reset();
         CONTROL_GetInput(&info);
         return;
     }

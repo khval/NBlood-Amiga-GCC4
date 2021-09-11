@@ -73,6 +73,12 @@ struct DEMOCHAIN
 {
     DEMOCHAIN *pNext;
     char zName[BMAX_PATH];
+
+	DEMOCHAIN()
+	{
+		pNext = NULL;
+		zName[0]=0;
+	}
 };
 
 class CDemo {

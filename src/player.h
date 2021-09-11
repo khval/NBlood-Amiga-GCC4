@@ -56,7 +56,12 @@ enum
 struct PACKINFO
 {
     bool isActive;       // is active (0/1)
-    int  curAmount = 0;  // remaining percent
+    int  curAmount;  // remaining percent
+
+	PACKINFO()
+	{
+		curAmount = 0;
+	}
 };
 
 struct POSTURE

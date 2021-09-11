@@ -462,15 +462,29 @@ void G_AddPath(const char *buffer)
 // loads all group (grp, zip, pk3/4) files in the given directory
 void G_LoadGroupsInDir(const char *dirname)
 {
+#if (__GNUC__ > 4)
     static const char *extensions[] = { "*.grp", "*.zip", "*.ssi", "*.pk3", "*.pk4" };
+#else
+    static const char *extensions[] = { "*.grp", "*.zip", "*.ssi", "*.pk3", "*.pk4", NULL };
+#endif
+
     char buf[BMAX_PATH];
     fnlist_t fnlist = FNLIST_INITIALIZER;
 
+#if (__GNUC__ > 4)
     for (auto & extension : extensions)
+#else
+    for (static const char **extension = extensions ; *extension ; extension++  )
+#endif
+
     {
         BUILDVFS_FIND_REC *rec;
 
+#if (__GNUC__ > 4)
         fnlist_getnames(&fnlist, dirname, extension, -1, 0);
+#else
+        fnlist_getnames(&fnlist, dirname, *extension, -1, 0);
+#endif
 
         for (rec=fnlist.findfiles; rec; rec=rec->next)
         {

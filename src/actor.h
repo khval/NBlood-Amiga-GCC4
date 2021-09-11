@@ -273,3 +273,4 @@ void MakeSplash(spritetype *pSprite, XSPRITE *pXSprite);
 void actBuildMissile(spritetype* pMissile, int nXSprite, int nSprite);
 
 extern int DudeDifficulty[];
+

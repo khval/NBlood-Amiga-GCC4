@@ -10,6 +10,8 @@
 ##
 ##
 
+WITHOUT_GTK=1
+
 # Debugging options
 RELEASE ?= 1
 
@@ -67,10 +69,10 @@ CXX?=g++
 NASM?=nasm
 RC?=windres
 OURCFLAGS=$(debug) -W -Wall -Wno-write-strings -Wno-char-subscripts -Wno-unused \
-	-fno-strict-aliasing  -funsigned-char -DNO_GCC_BUILTINS -DENGINE_19960925 -DASS_REVERSESTEREO -DSMACKER_DISABLE \
+	-fno-strict-aliasing  -funsigned-char -Dnullptr=NULL -DNO_GCC_BUILTINS -DENGINE_19960925 -DASS_REVERSESTEREO -DSMACKER_DISABLE \
 	 -I$(EINC) -I$(MACTROOT) -I$(AUDIOLIBROOT)/include -I$(ENETROOT)/include
 
-OURCXXFLAGS=-fno-exceptions -fno-rtti -Wno-narrowing -I$(INC)
+OURCXXFLAGS=-fno-exceptions -fno-rtti  -I$(INC)
 
 LIBS=-lm
 GAMELIBS=

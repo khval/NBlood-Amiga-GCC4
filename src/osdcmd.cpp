@@ -167,10 +167,10 @@ static int osdcmd_map(osdcmdptr_t parm)
     int bFound = 0;
     for (int i = 0; i < gEpisodeCount; i++)
     {
-        auto pEpisodeInfo = &gEpisodeInfo[i];
+        EPISODEINFO* pEpisodeInfo = &gEpisodeInfo[i];
         for (int j = 0; j < pEpisodeInfo->nLevels; j++)
         {
-            auto pLevelInfo = &pEpisodeInfo->levelsInfo[j];
+            LEVELINFO* pLevelInfo = &pEpisodeInfo->levelsInfo[j];
             if (!Bstrcasecmp(pLevelInfo->Filename, filename))
             {
                 gGameOptions.nEpisode = i;

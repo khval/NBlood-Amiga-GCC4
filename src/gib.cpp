@@ -512,7 +512,7 @@ void gibPrecache(void)
 {
     for (int i = 0; i < kGibMax; i++)
     {
-        auto const pThing = gibList[i].at8;
+        GIBTHING* const pThing = gibList[i].at8;
         if (pThing)
         {
             for (int j = 0; j < gibList[i].atc; j++)
