@@ -18,6 +18,8 @@
  
  */
 
+#define __USE_INLINE__
+
 #include "asssys.h"
 
 #ifdef _WIN32

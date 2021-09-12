@@ -17,6 +17,11 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
  */
+
+#ifdef __amigaos4__
+#define __USE_INLINE__
+#endif
+
 #include "driver_cdplayer.h"
 
 #include <clib/alib_protos.h>

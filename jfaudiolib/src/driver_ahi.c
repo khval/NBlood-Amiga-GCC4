@@ -22,6 +22,10 @@
  * AHI output driver for MultiVoc
  */
 
+#ifdef __amigaos4__
+#define __USE_INLINE__
+#endif
+
 #include <proto/ahi.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -50,7 +54,13 @@ static int Initialised = 0;
 static int Playing = 0;
 static int actsound = 0;
 static struct AHISampleInfo sample[2];
+
+#ifdef __amigaos4__
+struct Device * AHIBase;
+#else
 struct Library *AHIBase;
+#endif
+
 static struct MsgPort *AHImp = NULL;
 static struct AHIRequest *AHIio = NULL;
 static BYTE AHIDevice = -1;

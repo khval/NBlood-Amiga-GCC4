@@ -22,6 +22,10 @@
  * Paula output driver for MultiVoc
  */
 
+#ifdef __amigaos4__
+#define __USE_INLINE__
+#endif
+
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <devices/audio.h>
