@@ -63,6 +63,12 @@ ifndef ARCHITECTURE
 	ifneq (,$(findstring i686-,$(machine)))
 		ARCHITECTURE=X86
 	endif
+	ifneq (,$(findstring 68K-,$(machine)))
+		ARCHITECTURE=68K
+	endif
+	ifneq (,$(findstring PPC-,$(machine)))
+		ARCHITECTURE=PPC
+	endif
 endif
 
 ifeq ($(PLATFORM),WINDOWS)
@@ -74,8 +80,13 @@ else
 		RENDERTYPE=AMIGA
 		EXESUFFIX=$(AMISUFFIX)
 	else
-		RENDERTYPE=SDL
-		EXESUFFIX=
+		ifeq ($(PLATFORM),AMIGAPPC)
+			RENDERTYPE=AMIGAPPC
+			EXESUFFIX=$(AMISUFFIX)
+		else
+			RENDERTYPE=SDL
+			EXESUFFIX=
+		endif
 	endif
 endif
 

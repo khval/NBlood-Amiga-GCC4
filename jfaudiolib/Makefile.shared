@@ -19,9 +19,11 @@ else
   JFAUDIOLIB_HAVE_VORBIS=1
   JFAUDIOLIB_LDFLAGS+= $(shell $(PKGCONFIG) --libs vorbisfile)
  endif
- ifneq (,$(shell $(SDL2CONFIG) --version))
-  JFAUDIOLIB_HAVE_SDL=2
-  JFAUDIOLIB_LDFLAGS+= $(shell $(SDL2CONFIG) --libs)
+ ifneq (amiga,$(findstring amiga,$(machine)))
+  ifneq (,$(shell $(SDL2CONFIG) --version))
+   JFAUDIOLIB_HAVE_SDL=2
+   JFAUDIOLIB_LDFLAGS+= $(shell $(SDL2CONFIG) --libs)
+  endif
  endif
  ifeq (yes,$(shell $(PKGCONFIG) --exists alsa && echo yes))
   JFAUDIOLIB_HAVE_ALSA=1
@@ -37,11 +39,19 @@ ifeq (aros,$(findstring aros,$(machine)))
  JFAUDIOLIB_HAVE_SDL=0
  JFAUDIOLIB_HAVE_VORBIS=0
 endif
-ifeq (amiga,$(findstring amiga,$(machine)))
+ifeq (amiga,$(findstring amiga68k,$(machine)))
  JFAUDIOLIB_HAVE_AHI=1
  JFAUDIOLIB_HAVE_PAULA=1
  JFAUDIOLIB_HAVE_CAMD=1
  JFAUDIOLIB_HAVE_CDPLAYER=1
+ JFAUDIOLIB_HAVE_SDL=0
+ JFAUDIOLIB_HAVE_VORBIS=0
+endif
+ifeq (amigappc,$(findstring amigappc,$(machine)))
+ JFAUDIOLIB_HAVE_AHI=1
+ JFAUDIOLIB_HAVE_PAULA=0
+ JFAUDIOLIB_HAVE_CAMD=0
+ JFAUDIOLIB_HAVE_CDPLAYER=0
  JFAUDIOLIB_HAVE_SDL=0
  JFAUDIOLIB_HAVE_VORBIS=0
 endif
