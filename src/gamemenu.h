@@ -248,7 +248,7 @@ public:
 class CGameMenuItemSlider : public CGameMenuItem
 {
 public:
-    int *pValue;
+    int32 *pValue;
     int nValue;
     int nRangeLow;
     int nRangeHigh;
