@@ -48,6 +48,7 @@
 
 #ifdef __amigaos4__
 #include <graphics/gfx.h>
+struct TimerIFace *ITimer = NULL;
 #endif
 
 #include <SDI_compiler.h>
@@ -87,7 +88,7 @@ static struct Screen *screen = NULL;
 static unsigned char ppal[256 * 4];
 static ULONG spal[1 + (256 * 3) + 1];
 static int updatePalette = 0;
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__amigaos4__)
 struct Library *CyberGfxBase = NULL;
 #else
 struct Library *LowLevelBase;
@@ -336,11 +337,27 @@ int main(int argc, char *argv[])
 //
 // initsystem() -- init Amiga systems
 //
+
+#if defined(__amigaos4__)
 int initsystem(void)
 {
 	atexit(uninitsystem);
 
-#if !defined(__AROS__) && !defined(__amigaos4__)
+	if (open_libs() == FALSE)
+	{
+		close_libs();
+	}
+
+	return 0;
+}
+#endif
+
+#if !defined(__amigaos4__)
+int initsystem(void)
+{
+	atexit(uninitsystem);
+
+#if !defined(__AROS__) 
 	CyberGfxBase = OpenLibrary((STRPTR)"cybergraphics.library", 41);
 
 	if (SysBase->AttnFlags & AFF_68040)
@@ -353,10 +370,13 @@ int initsystem(void)
 #else
 	LowLevelBase = OpenLibrary("lowlevel.libarary", 0);
 #endif
+
 	SetSignal(0, SIGBREAKF_CTRL_C);
 
 	return 0;
 }
+#endif
+
 
 //
 // uninitsystem() -- uninit Amiga systems
@@ -369,7 +389,12 @@ void uninitsystem(void)
 
 	shutdownvideo();
 
-#ifndef __AROS__
+#if defined(__amigaos4__)
+	close_libs();
+#endif
+
+#if !defined(__amigaos4__)
+#if !defined( __AROS__)
 	if (CyberGfxBase) {
 		CloseLibrary(CyberGfxBase);
 		CyberGfxBase = NULL;
@@ -384,6 +409,7 @@ void uninitsystem(void)
 		CloseLibrary(LowLevelBase);
 		LowLevelBase = NULL;
 	}
+#endif
 #endif
 
 }
@@ -989,6 +1015,7 @@ int inittimer(int tickspersecond)
 			{
 #ifdef __amigaos4__
 				TimerBase = timerio->Request.io_Device;
+    				ITimer = (struct TimerIFace *) GetInterface((struct Library *)TimerBase, "main", 1, 0);
 #else
 				TimerBase = timerio->tr_node.io_Device;
 #endif
@@ -1035,6 +1062,12 @@ void uninittimer(void)
 		AbortIO((struct IORequest *)timerio);
 		WaitIO((struct IORequest *)timerio);
 	}
+
+#ifdef __amigaos4__
+   	 if (ITimer) DropInterface ((struct Interface *)ITimer);
+	ITimer = NULL;
+#endif
+
 	CloseDevice((struct IORequest *)timerio);
 	DeleteIORequest((struct IORequest *)timerio);
 	DeleteMsgPort(timerport);
@@ -1245,6 +1278,8 @@ void getvalidmodes(void)
 		}
 	}
 
+#ifndef __amigaos4__
+
 	if (CyberGfxBase && fsMonitorID == (ULONG)INVALID_ID && fsModeID == (ULONG)INVALID_ID) {
 		int bpp = 8;
 		if ((screen = LockPubScreen((STRPTR)wndPubScreen))) {
@@ -1265,6 +1300,8 @@ void getvalidmodes(void)
 			}
 		}
 	}
+
+#endif
 
 #undef CHECK
 #undef ADDMODE
@@ -1499,15 +1536,20 @@ int setvideomode(int x, int y, int c, int fs)
 		use_c2p = use_wcp = 0;
 
 		if ((GetBitMapAttr(screen->RastPort.BitMap, BMA_FLAGS) & BMF_STANDARD)) {
+#if !defined(__amigaos4__)
 			if ((x % 32) == 0 && (sbuf[0] = AllocScreenBuffer(screen, 0, SB_SCREEN_BITMAP)) && (sbuf[1] = AllocScreenBuffer(screen, 0, SB_COPY_BITMAP))) {
 				safetochange = 1;
 				dispport = CreateMsgPort();
 				sbuf[0]->sb_DBufInfo->dbi_DispMessage.mn_ReplyPort = dispport;
 				sbuf[1]->sb_DBufInfo->dbi_DispMessage.mn_ReplyPort = dispport;
+
 				use_c2p = 1;
 			} else if (((struct Library *)GfxBase)->lib_Version >= 40) {
 				use_wcp = 1;
 			} else {
+#else
+			{
+#endif
 				// allocate a temp rastport for WritePixelArray8
 				struct BitMap *wpbm = AllocBitMap(screen->Width, 1, 8, BMF_CLEAR|BMF_STANDARD, NULL);
 				if (wpbm) {
@@ -1637,9 +1679,29 @@ void enddrawing(void)
 //
 // showframe() -- update the display
 //
+
+
+#if defined(__amigaos4__)
 void showframe(void)
 {
-#if defined(__AROS__) || defined(__amigaos4__)
+	WaitTOF();
+
+	if (screen)
+	{
+		WritePixelArray(frame, 0, 0, bytesperline, PIXF_CLUT, window->RPort, 0, 0, xres, yres );
+	}
+	else
+	{
+		WritePixelArray(frame, 0, 0, bytesperline, PIXF_CLUT, window->RPort, window->BorderLeft, window->BorderTop, xres, yres );
+	}
+}
+#endif
+
+#if !defined(__amigaos4__) 
+
+void showframe(void)
+{
+#if defined(__AROS__) 
 	WaitTOF();
 #endif
 
@@ -1657,11 +1719,7 @@ void showframe(void)
 			ChangeScreenBuffer(screen, sbuf[currentBitMap]);
 			safetochange = 0;
 		} else if (CyberGfxBase) {
-#ifdef __amigaos4__
-			WritePixelArray(frame, 0, 0, bytesperline, PIXF_CLUT, window->RPort, 0, 0, xres, yres );
-#else	// Cybergraphics.
 			WritePixelArray(frame, 0, 0, bytesperline, window->RPort, 0, 0, xres, yres, RECTFMT_LUT8);
-#endif
 		} else if (use_wcp) {
 			WriteChunkyPixels(window->RPort, 0, 0, xres - 1, yres - 1, frame, bytesperline);
 		} else {
@@ -1672,14 +1730,11 @@ void showframe(void)
 			updatePalette = 0;
 		}
 	} else {
-#ifdef __amigaos4__
-		WritePixelArray(frame, 0, 0, bytesperline, PIXF_CLUT, window->RPort, window->BorderLeft, window->BorderTop, xres, yres );
-#else	// Cybergraphics.
 		WriteLUTPixelArray(frame, 0, 0, bytesperline, window->RPort, ppal, window->BorderLeft, window->BorderTop, xres, yres, CTABFMT_XRGB8);
-#endif
 	}
 }
 
+#endif
 
 //
 // setpalette() -- set palette values
