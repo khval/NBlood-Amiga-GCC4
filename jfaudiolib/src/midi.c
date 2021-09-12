@@ -765,7 +765,9 @@ static void _MIDI_ServiceRoutine
          Track++;
       }
       // TODO do this in one go instead of a loop?
-      for (int i = 0; i < minDelay; i++)
+
+	int i;
+      for ( i = 0; i < minDelay; i++)
       {
          _MIDI_AdvanceTick();
       }
